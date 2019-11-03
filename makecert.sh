@@ -1,5 +1,5 @@
 #!/bin/bash
-# call this script with an email address (valid or not).
+# just call this script!
 # like:
 # ./makecert.sh
 mkdir certs
