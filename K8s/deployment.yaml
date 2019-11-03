@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: avr-go-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: go-server
+  template:
+    metadata:
+      name: go-server
+      labels:
+        app: go-server
+    spec:
+      containers:
+      - name: GO-AVR
+        image: avr-go-server:latest
+        ports:
+        - containerPort: 2498

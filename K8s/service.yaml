@@ -1,0 +1,12 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: avr-go
+  namespace: prod
+spec:
+  selector:
+    app: avr-go
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 2498

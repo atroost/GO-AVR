@@ -1,0 +1,10 @@
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: avr-go
+  namespace: prod
+spec:
+  backend:
+    serviceName: avr-go
+    servicePort: 80
