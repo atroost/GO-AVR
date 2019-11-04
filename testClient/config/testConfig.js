@@ -28,7 +28,7 @@ testConfig.subscriberId = '2'
 testConfig.viewerId = '1'
 testConfig.timeZone = ' GMT ' 
 testConfig.interfaceVersion = 'ver=HE31.V01'
-testConfig.stbName = 'Living Room data ja toch zeker wel'
+testConfig.stbName = 'Living Room'
 testConfig.testData = '15616641|CANVAS|Access Hollywood|02/02/2004|09:00:00|10:59:59|STOPPED|AGR7342982|HD|'    
 // const avrMessage = `${testName+testExecution}|${testConfig.subevt}|${testConfig.tan}|${testConfig.ip}|${testConfig.subscriberId}|${testConfig.viewerId}|${hours + testConfig.timeZone + date }|${testConfig.interfaceVersion}|${testConfig.stbName}|${testConfig.testData}|`
  
