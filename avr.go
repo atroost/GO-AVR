@@ -8,6 +8,8 @@ import (
 	"net"
 	"os"
 	"strings"
+	"github.com/google/uuid"
+	"fmt"
 )
 
 func handleConnection(c net.Conn) {
@@ -32,8 +34,12 @@ func handleConnection(c net.Conn) {
 func main() {
 	// determine whether to use a secure server or not
 	useSecureServer := false
-	// create log
-	f, err := os.OpenFile("testlogfile", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+	// Create unique ID to be able to generate unique logfile names
+	serverId := uuid.New()
+	fmt.Printf("Unique id: %s\n", serverId.String())
+	
+	// create unique log
+	f, err := os.OpenFile(serverId.String() + ".log", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
 	if err != nil {
 		log.Fatalf("error opening file: %v", err)
 	}
