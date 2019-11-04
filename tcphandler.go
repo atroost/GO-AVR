@@ -45,6 +45,7 @@ func handleTCPConnection(c net.Conn) {
 
 			// Create goroutine that stores data to different functions
 			go writeToDataStore(stringConversion)
+			go writeToRemoteEndpoint(stringConversion)
 			return
 		}
 	}

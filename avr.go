@@ -36,7 +36,7 @@ func main() {
 	useSecureServer := false
 	// Create unique ID to be able to generate unique logfile names
 	serverId := uuid.New()
-	fmt.Printf("Unique id: %s\n", serverId.String())
+	fmt.Printf("Unique id of AVR server: %s\n", serverId.String())
 	
 	// create unique log
 	f, err := os.OpenFile(serverId.String() + ".log", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
@@ -46,7 +46,7 @@ func main() {
 	defer f.Close()
 
 	log.SetOutput(f)
-	if useSecureServer {
+	if !useSecureServer {
 		startAvrNoCert()
 	} else {
 		// check certs
