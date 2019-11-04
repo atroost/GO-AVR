@@ -1,0 +1,15 @@
+{
+  "name": "avrclient",
+  "version": "0.0.1",
+  "description": "testclient for testing AVR implementation (both secure and non secure)",
+  "main": "startTest.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node startTest.js"
+  },
+  "author": "gabor.de.wit",
+  "license": "ISC",
+  "dependencies": {
+    "java.io": "^2.4.0"
+  }
+}
