@@ -15,3 +15,8 @@ For legacy reasons a testsuite is created in Node.js and can be found under the 
 * provide a way to test both secure and insecure interfaces on the receiving server (using node.js built in public cert set)
 
 The aim for the testclient and split of the responsibility in Go files is to ensure  distributed development and easier to read go files.
+
+To run the code including a subfiles:
+```
+go run .
+```
