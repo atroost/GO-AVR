@@ -8,7 +8,6 @@ import (
 	"net"
 	"os"
 	"strings"
-	"github.com/google/uuid"
 	"fmt"
 )
 
@@ -35,11 +34,18 @@ func main() {
 	// determine whether to use a secure server or not
 	useSecureServer := false
 	// Create unique ID to be able to generate unique logfile names
-	serverId := uuid.New()
-	fmt.Printf("Unique id of AVR server: %s\n", serverId.String())
+	//The string representation of a UUID consists of 32 hexadecimal digits displayed in 5 groups but NOT separated by hyphens.
+	b := make([]byte, 16)
+    _, err := rand.Read(b)
+    if err != nil {
+        log.Fatal(err)
+    }
+    uuid := fmt.Sprintf("%x%x%x%x%x",
+        b[0:4], b[4:6], b[6:8], b[8:10], b[10:])
+    fmt.Printf("Unique id of AVR server: %s\n", uuid)
 	
 	// create unique log
-	f, err := os.OpenFile(serverId.String() + ".log", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+	f, err := os.OpenFile(uuid + ".log", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
 	if err != nil {
 		log.Fatalf("error opening file: %v", err)
 	}
