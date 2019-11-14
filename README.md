@@ -25,21 +25,21 @@ go run .
 
 Using the included Dockerfile it's possible to run the container (either detached or not). To do so follow the upcoming steps
 
-###Build docker image
+### Build docker image
 ```
  docker build -t <avr_image> .
 ```
 
 Run the associated created image (this case OSX forces to explicitely set the port for docker) As an input parameter we also put the port into  the container runtime (2498 for non-secure / 2499 for secure)
 
-###Run docker image
+### Run docker image
 ```
  docker run -p 2498:2498 <avr_image_reference> 2498 tail -f /dev/null
 ```
 
 This will launch the command line tailing interface of the container itself. Use the testclient to see logfiles being created in the container
 
-###Run test harnass
+### Run test harnass
 ```
  npm start
 ```
