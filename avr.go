@@ -44,10 +44,10 @@ func main() {
         log.Fatal(err)
 	}
 	uuid := fmt.Sprintf("%x%x%x%x%x", b[0:4], b[4:6], b[6:8], b[8:10], b[10:])
-	fmt.Printf("Unique id of AVR server: %s\n", uuid)
+	fmt.Printf("**Unique id of AVR server: %s**\n", uuid)
 	
 	logFileName := "avrlog-" + uuid + ".log"
-	fmt.Printf("LogFile Syntax is: %s\n", logFileName)
+	fmt.Printf("**LogFile Syntax is: %s**\n", logFileName)
 	
 	// create logger + logrotate routine.
 	if len(arguments) == 1 {
