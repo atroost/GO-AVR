@@ -31,8 +31,11 @@ module.exports = {
                     const hours = today.toLocaleTimeString();
                     const date = today.toLocaleDateString('en-GB');
                     const avrMessage = `${testConfig.testName+testExecution}|${testConfig.subevt}|${testConfig.tan}|${testConfig.ip}|${testConfig.subscriberId}|${testConfig.viewerId}|${hours + testConfig.timeZone + date }|${testConfig.interfaceVersion}|${testConfig.stbName}|${testConfig.testData}|`
+                    // const normalizer = outputObjectStream.normalize(avrMessage, string)
                     const avrBuffer = outputObjectStream.writeObject(avrMessage);
                     console.log(today)
+                    console.log(avrBuffer)
+                    console.log("AVR message: " + avrMessage)
                     console.log(`Connected to AVR server over HTTP at ${environmentSelector}:${testConfig.testTargetPort}`);
                     
                     // To test if receiver and sender are seeing the same buffers check size.
@@ -43,8 +46,8 @@ module.exports = {
                     console.log(`Length of AVR message is ${byteCount(avrMessage)}`);
 
                     // Send data to connected server
-                    avrClient.write(avrBuffer);
-                    console.log(`Wrote ${avrBuffer} non-securely to ${environmentSelector}`);
+                    avrClient.write(avrMessage);
+                    console.log(`Wrote ${avrMessage} non-securely to ${environmentSelector}`);
 
                     //When server signals the end of the message close the connection.
                     avrClient.on('close', function () {
