@@ -34,20 +34,20 @@ module.exports = {
                     // const normalizer = outputObjectStream.normalize(avrMessage, string)
                     const avrBuffer = outputObjectStream.writeObject(avrMessage);
                     console.log(today)
-                    console.log(avrBuffer)
+                    // console.log(avrBuffer)
                     console.log("AVR message: " + avrMessage)
                     console.log(`Connected to AVR server over HTTP at ${environmentSelector}:${testConfig.testTargetPort}`);
                     
                     // To test if receiver and sender are seeing the same buffers check size.
-                    function byteCount(s) {
-                        return encodeURI(s).split(/%..|./).length - 1;
-                    }
-                    // byteCount(avrMessage)
-                    console.log(`Length of AVR message is ${byteCount(avrMessage)}`);
+                    // function byteCount(s) {
+                    //     return encodeURI(s).split(/%..|./).length - 1;
+                    // }
+                    // // byteCount(avrMessage)
+                    // console.log(`Length of AVR message is ${byteCount(avrMessage)}`);
 
                     // Send data to connected server
-                    avrClient.write(avrMessage);
-                    console.log(`Wrote ${avrMessage} non-securely to ${environmentSelector}`);
+                    avrClient.write(avrBuffer);
+                    console.log(`Wrote ${avrBuffer} non-securely to ${environmentSelector}`);
 
                     //When server signals the end of the message close the connection.
                     avrClient.on('close', function () {
