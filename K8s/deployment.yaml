@@ -1,20 +1,22 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: avr-go-server
+  name: avr-go
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: go-server
+      app: avr-go
   template:
     metadata:
-      name: go-server
+      name: avr-go
       labels:
-        app: go-server
+        app: avr-go
     spec:
       containers:
-      - name: GO-AVR
-        image: avr-go-server:latest
+      - name: avr-go
+        image: registry.platform.svc.appfactory.local:5000/docker/avr_go:0.1
         ports:
         - containerPort: 2498
+        command: ["./avrserver"]
+        args: ["2498"]

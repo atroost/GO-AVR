@@ -46,8 +46,10 @@ module.exports = {
                     // console.log(`Length of AVR message is ${byteCount(avrMessage)}`);
 
                     // Send data to connected server
+                    slicedbuffer = avrBuffer.slice(7, avrBuffer.length)
+                    console.log(avrBuffer.length)
                     avrClient.write(avrBuffer);
-                    console.log(`Wrote ${avrBuffer} non-securely to ${environmentSelector}`);
+                    console.log(`Wrote ${slicedbuffer} non-securely to ${environmentSelector}`);
 
                     //When server signals the end of the message close the connection.
                     avrClient.on('close', function () {
