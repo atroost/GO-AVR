@@ -1,10 +1,11 @@
 package main
 
 import (
-	"fmt"
+	// "fmt"
 	"crypto/rand"
 	"crypto/tls"
-	"log"
+	// "log"
+	logger "github.com/rs/zerolog/log"
 )
 
 // The non secure server is basically a similar construct as a TLS server, just with less parameters to define for TLS
@@ -12,12 +13,14 @@ import (
 func startAvrSecure(launchWithChannel bool) {
 	// build port config to launch the TCP socket
 	configPortSecureTcp := ":2499"
-	fmt.Println("** TCP Service Started securely on Port:", configPortSecureTcp, " **")
+	// fmt.Println("** TCP Service Started securely on Port:", configPortSecureTcp, " **")
+	logger.Info().Msg("TCP Service Started securely on port " + configPortSecureTcp)
 	
 	// load certificates
 	cert, err := tls.LoadX509KeyPair("certs/server.pem", "certs/server.key")
 	if err != nil {
-		log.Fatalf("server: loadkeys: %s", err)
+		// log.Fatalf("server: loadkeys: %s", err)
+		logger.Fatal().Err(err).Msg("Error while loading certificates")
 	}
 
 	// Construct secure TCP server - TODO make naming convention the same over the  two files
@@ -25,7 +28,8 @@ func startAvrSecure(launchWithChannel bool) {
 	config.Rand = rand.Reader
 	secureTcpServer, err := tls.Listen("tcp", configPortSecureTcp, &config)
 	if err != nil {
-		fmt.Println(err)
+		// fmt.Println(err)
+		logger.Error().Err(err).Msg("Error setting up Secure TCP server")
 		return
 	}
 
@@ -38,7 +42,8 @@ func startAvrSecure(launchWithChannel bool) {
 		for {
 			c, err := secureTcpServer.Accept()
 			if err != nil {
-				fmt.Println(err)
+				// fmt.Println(err)
+				logger.Error().Err(err).Msg("Error during TCP handshaker")
 				return
 			}
 			// When we accept a request we want a special GoRoutine to thread off the management of the buffer and data in it
@@ -49,7 +54,8 @@ func startAvrSecure(launchWithChannel bool) {
 			for {
 				c, err := secureTcpServer.Accept()
 				if err != nil {
-					fmt.Println(err)
+					// fmt.Println(err)
+					logger.Error().Err(err).Msg("Error during TCP handshaker")
 					return
 				}
 				// When we accept a request we want a special GoRoutine to thread off the management of the buffer and data in it

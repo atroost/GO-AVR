@@ -5,11 +5,13 @@ import (
 	"fmt"
 	"io"
 	"net"
+	logger "github.com/rs/zerolog/log"
 )
 
 // Create alternative handler for serving TCP connections
 func handleTCPConnectionLogChannel(c net.Conn, logChannel chan string) {
-	fmt.Printf("Handling socket from %s\n", c.RemoteAddr().String())
+	// fmt.Printf("Handling socket from %s\n", c.RemoteAddr().String())
+	logger.Debug().Msg("Handling incoming socket: "+ c.RemoteAddr().String())
 
 	// Create buffer to which data can be written
 	// Ensure buffer can be read with bufio package from Golang
@@ -21,7 +23,8 @@ func handleTCPConnectionLogChannel(c net.Conn, logChannel chan string) {
 		// Start preparing capability to read from the generated buffer
 		bufferByteReader, err := bufferReader.ReadByte()
 		if err != nil {
-			fmt.Println("Error hit in bytereader: ",err)
+			// fmt.Println("Error hit in bytereader: ",err)
+			logger.Error().Err(err).Msg("Error hit in bytereader function")
 			return
 		}
 
@@ -33,18 +36,20 @@ func handleTCPConnectionLogChannel(c net.Conn, logChannel chan string) {
 		// read the full message, or return an error
 		readBytes, err := io.ReadFull(bufferReader, dataBuffer[:int(dataInBuffer)])
 		if err != nil {
-			fmt.Println("Error hit in readbyte function: ",err)
+			// fmt.Println("Error hit in readbyte function: ",err)
+			logger.Error().Err(err).Msg("Error hit in readbyte function")
 			return
 		}
 
 		// Convert buffer to string if there is more than 0 bytes available to convert
-		fmt.Println(dataBuffer[:int(dataInBuffer)])
+		// fmt.Println(dataBuffer[:int(dataInBuffer)])
 		if bufferByteReader > 0 && readBytes > 0 {
 			// Convert data to string for logging purposes
 			stringConversion := string(dataBuffer[:int(dataInBuffer)])
 
 			// Optional loglines for debugging
 			// fmt.Println("BufferBytereader size: ", bufferByteReader)
+			logger.Trace().Str("bytesize", string(bufferByteReader)).Msg("BufferBytereader calculated")
 			
 			logChannel <- stringConversion
 			
@@ -55,7 +60,8 @@ func handleTCPConnectionLogChannel(c net.Conn, logChannel chan string) {
 
 // Create alternative handler for serving TCP connections
 func handleTCPConnection(c net.Conn) {
-	fmt.Printf("Handling socket from %s\n", c.RemoteAddr().String())
+	logger.Debug().Msg("Handling incoming socket: "+ c.RemoteAddr().String())
+	// fmt.Printf("Handling socket from %s\n", c.RemoteAddr().String())
 
 	// Create buffer to which data can be written
 	// Ensure buffer can be read with bufio package from Golang
@@ -67,7 +73,8 @@ func handleTCPConnection(c net.Conn) {
 		// Start preparing capability to read from the generated buffer
 		bufferByteReader, err := bufferReader.ReadByte()
 		if err != nil {
-			fmt.Println("Error hit in bytereader: ",err)
+			// fmt.Println("Error hit in bytereader: ",err)
+			logger.Error().Err(err).Msg("Error hit in bytereader function")
 			return
 		}
 
@@ -80,6 +87,7 @@ func handleTCPConnection(c net.Conn) {
 		readBytes, err := io.ReadFull(bufferReader, dataBuffer[:int(dataInBuffer)])
 		if err != nil {
 			fmt.Println("Error hit in readbyte function: ",err)
+			logger.Error().Err(err).Msg("Error hit in readbyte function")
 			return
 		}
 
@@ -90,6 +98,7 @@ func handleTCPConnection(c net.Conn) {
 
 			// Optional loglines for debugging
 			// fmt.Println("BufferBytereader size: ", bufferByteReader)
+			logger.Trace().Msg("BufferBytereader calculated: " + string(bufferByteReader))
 
 			// Create goroutine that stores data to different functions
 			go writeToDataStore(stringConversion)
