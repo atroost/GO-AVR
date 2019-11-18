@@ -40,6 +40,7 @@ func main() {
 
 	// initiate zerologger for all logger functions
 	zerolog.TimeFieldFormat = zerolog.TimeFormatUnix
+	if len(arguments) > 2 {
 	switch arguments[2] {
 	case "fatal":
 		zerolog.SetGlobalLevel(zerolog.FatalLevel)
@@ -62,7 +63,11 @@ func main() {
 	default:
 		zerolog.SetGlobalLevel(zerolog.InfoLevel)
 		fmt.Println("Default logging set to: info ")	
-	} 
+	}
+	} else {
+		zerolog.SetGlobalLevel(zerolog.InfoLevel)
+		fmt.Println("Default logging set to: info ")
+	}
 
 	// Create unique ID to be able to generate unique logfile names
 	b := make([]byte, 16)
