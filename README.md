@@ -18,9 +18,10 @@ For legacy reasons a testsuite is created in Node.js and can be found under the 
 
 The aim for the testclient and split of the responsibility in Go files is to ensure  distributed development and easier to read go files.
 
-To run the code including a subfiles:
+### Run code
+To run the code including a subfiles it's possible to provide the server arguments directly to the application (including containers if container runtime is used). A zerolog logger is used to perform overall logmanagement within the application for server logs. The standard logger of Go is used for handling writes to external files because of formatting. When launching the server loglevels can be set using the loglevel as an input parameter. When no input parameter is provided for the zerolog, the application falls back to loglevel "info".
 ```
-go run .
+go run . <port> <loglevel>
 ```
 
 Using the included Dockerfile it's possible to run the container (either detached or not). To do so follow the upcoming steps
