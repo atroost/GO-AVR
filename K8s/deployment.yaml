@@ -1,21 +1,23 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: avr-go
+  name: avr-canary
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: avr-go
+      app: avr
+      track: canary
   template:
     metadata:
-      name: avr-go
+      name: avr
       labels:
-        app: avr-go
+        app: avr
+        track: canary
     spec:
       containers:
-      - name: avr-go
-        image: registry.platform.svc.appfactory.local:5000/docker/avr_go:0.51
+      - name: avr
+        image: registry.platform.svc.appfactory.local:5000/docker/avr_go:0.60
         volumeMounts:
         - mountPath: /server/logs
           name: avr-volume
@@ -34,4 +36,4 @@ spec:
         secret:
           defaultMode: 420
           secretName: default-token-nqll4
-  
+ 

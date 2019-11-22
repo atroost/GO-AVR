@@ -2,22 +2,22 @@ package main
 
 import (
 	"bufio"
-	"fmt"
+	// "fmt"
 	"io"
 	"net"
 	logger "github.com/rs/zerolog/log"
+	"strings"
 )
 
 // Create alternative handler for serving TCP connections
 func handleTCPConnectionLogChannel(c net.Conn, logChannel chan string) {
-	// fmt.Printf("Handling socket from %s\n", c.RemoteAddr().String())
 	logger.Debug().Msg("Handling incoming socket: "+ c.RemoteAddr().String())
 
 	// Create buffer to which data can be written
 	// Ensure buffer can be read with bufio package from Golang
 	dataBuffer := make([]byte, 4096)
 	bufferReader := bufio.NewReader(c)
-
+	
 	// Create loop to get the size of the message and thereby outputting the entire message
 	for {
 		// Start preparing capability to read from the generated buffer
@@ -45,29 +45,32 @@ func handleTCPConnectionLogChannel(c net.Conn, logChannel chan string) {
 		// fmt.Println(dataBuffer[:int(dataInBuffer)])
 		if bufferByteReader > 0 && readBytes > 0 {
 			// Convert data to string for logging purposes
-			stringConversion := string(dataBuffer[:int(dataInBuffer)])
-
+			bytesConvertedToString := string(dataBuffer[:int(dataInBuffer)])
+			// bytesConvertedToUtf := strings.ToValidUTF8(bytesConvertedToString, "")
+			stringStrippedOfUnicode := strings.TrimLeft(bytesConvertedToString, "\ufffd\u0000\u0005t\u0000\\ufff\u0003\ufffd\u0001A\u00001\u00002&abcdefghikjlmnopqrstuvw1234567890{}!@#$%^&*()")
+			
 			// Optional loglines for debugging
-			// fmt.Println("BufferBytereader size: ", bufferByteReader)
 			logger.Trace().Str("bytesize", string(bufferByteReader)).Msg("BufferBytereader calculated")
-			
-			logChannel <- stringConversion
-			
+
+
+			logChannel <- stringStrippedOfUnicode
+			c.Close()
 			return
 		}
+		return
 	}
+	
 }
 
 // Create alternative handler for serving TCP connections
 func handleTCPConnection(c net.Conn) {
 	logger.Debug().Msg("Handling incoming socket: "+ c.RemoteAddr().String())
-	// fmt.Printf("Handling socket from %s\n", c.RemoteAddr().String())
 
 	// Create buffer to which data can be written
 	// Ensure buffer can be read with bufio package from Golang
 	dataBuffer := make([]byte, 4096)
 	bufferReader := bufio.NewReader(c)
-
+	
 	// Create loop to get the size of the message and thereby outputting the entire message
 	for {
 		// Start preparing capability to read from the generated buffer
@@ -86,7 +89,7 @@ func handleTCPConnection(c net.Conn) {
 		// read the full message, or return an error
 		readBytes, err := io.ReadFull(bufferReader, dataBuffer[:int(dataInBuffer)])
 		if err != nil {
-			fmt.Println("Error hit in readbyte function: ",err)
+			// fmt.Println("Error hit in readbyte function: ",err)
 			logger.Error().Err(err).Msg("Error hit in readbyte function")
 			return
 		}
@@ -94,16 +97,20 @@ func handleTCPConnection(c net.Conn) {
 		// Convert buffer to string if there is more than 0 bytes available to convert
 		if bufferByteReader > 0 && readBytes > 0 {
 			// Convert data to string for logging purposes
-			stringConversion := string(dataBuffer[:int(dataInBuffer)])
+			bytesConvertedToString := string(dataBuffer[:int(dataInBuffer)])
+			// bytesConvertedToUtf := strings.ToValidUTF8(bytesConvertedToString, "")
+			stringStrippedOfUnicode := strings.TrimLeft(bytesConvertedToString, "\ufffd\u0000\u0005t\u0000\\ufff\u0003\ufffd\u0001A\u00001\u00002&abcdefghikjlmnopqrstuvw1234567890{}!@#$%^&*()")
 
 			// Optional loglines for debugging
 			// fmt.Println("BufferBytereader size: ", bufferByteReader)
 			logger.Trace().Msg("BufferBytereader calculated: " + string(bufferByteReader))
 
 			// Create goroutine that stores data to different functions
-			go writeToDataStore(stringConversion)
+			go writeToDataStore(stringStrippedOfUnicode)
 			// go writeToRemoteEndpoint(stringConversion)
+			c.Close()
 			return
 		}
+		return
 	}
 }

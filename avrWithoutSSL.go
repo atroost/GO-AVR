@@ -13,7 +13,6 @@ import (
 func startAvr(launchWithChannel bool) {
 	// build port config to launch the TCP socket
 	configPortTcp := ":2498"
-	// fmt.Println("** TCP Service Started non-securely on Port:", configPortTcp, " **")
 	logger.Info().Msg("TCP Service Started non-securely on port " + configPortTcp)
 	
 	// Construct TCP server - TODO make naming convention the same over the  two files

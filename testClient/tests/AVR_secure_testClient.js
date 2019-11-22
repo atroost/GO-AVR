@@ -28,8 +28,10 @@ module.exports = {
                     const today = new Date();
                     const hours = today.toLocaleTimeString();
                     const date = today.toLocaleDateString('en-GB');
-                    const avrMessage = `${testConfig.testNameSecure+testExecutionSecure}|${testConfig.subevt}|${testConfig.tan}|${testConfig.ip}|${testConfig.subscriberId}|${testConfig.viewerId}|${hours + testConfig.timeZone + date }|${testConfig.interfaceVersion}|${testConfig.stbName}|${testConfig.testData}|`
-                    const avrBuffer = outputObjectStream.writeObject(avrMessage);
+                    const avrMessage = `${testConfig.testNameSecure+testExecutionSecure}|${testConfig.subevt}|${testConfig.tan}|${testConfig.ip}|${testConfig.subscriberId}|${testConfig.viewerId}|${hours + testConfig.timeZone + date }|${testConfig.interfaceVersion}|${testConfig.stbName}|${testConfig.testData}|\n`
+                    const avrMessage2 = `${testConfig.testNameSecure+testExecutionSecure}|${testConfig.subevt}|${testConfig.tan}|${testConfig.ip}|${testConfig.subscriberId}|${testConfig.viewerId}|${hours + testConfig.timeZone + date }|${testConfig.interfaceVersion}|${testConfig.stbName}|${testConfig.testData}|message2\n`
+                    const avrMessage3 = `${testConfig.testNameSecure+testExecutionSecure}|${testConfig.subevt}|${testConfig.tan}|${testConfig.ip}|${testConfig.subscriberId}|${testConfig.viewerId}|${hours + testConfig.timeZone + date }|${testConfig.interfaceVersion}|${testConfig.stbName}|${testConfig.testData}|message3`
+                    const avrBuffer = outputObjectStream.writeObject(avrMessage+avrMessage2+avrMessage3);
                     console.log(today)
                     console.log(`Connected to AVR server over HTTPS at ${environmentSelector}:${testConfig.testTargetPortSecure}`)
                     

@@ -33,10 +33,10 @@ func createRotatingLogger(fileName string, loggingPath string) {
 		// Assumption is that the time sleep is called in time.
 		if checkCurrentMinute != 0 {
 			// If current time is not full hour, continue
-			logger.Debug().Msg("No rotation needed, current minute within the hour")
+			logger.Debug().Msg("Periodic rotation check on logfile is false: No rotation needed")
 		} else {
 			// If we've hit a full hour, rotate the file
-			logger.Info().Msg("Starting logrotation")
+			logger.Info().Msg("Periodic rotation check on logfile is true: Starting logrotation")
 			avrLog.Rotate()
 		}
 		// Sleep for a minute.
@@ -49,7 +49,7 @@ func createRotatingLogger(fileName string, loggingPath string) {
 func createExportFile (fileName string, loggingPath string, loggingExportFolder string) {
 	// Simple for loop to generate logfiles.
 	for {
-		logger.Debug().Msg("Current file in use is: " + fileName)			
+		logger.Debug().Msg("Running check if files can be exported for: " + fileName)			
 		// Read content of the logfolder
 		files, err := ioutil.ReadDir(loggingPath)
 		if err != nil {
@@ -80,19 +80,20 @@ func createExportFile (fileName string, loggingPath string, loggingExportFolder 
 // Create function to write data to different stores, e.g. stdout and local logfile
 func writeToDataStoreOverChannel(logChannel chan string) {
 	// fmt.Println("Logchannel starting, waiting for channel data")
-	logger.Debug().Msg("Logchannel starting, waiting for channel data")
+	logger.Debug().Msg("Loggingchannel starting, waiting for channel data")
 	for {
 		logData := <- logChannel 
 		// fmt.Println("Preparing channeldata for store: ",logData)
 		logger.Debug().Msg("Preparing channeldata for store: " + logData)
 		log.Println(logData)
+		// log.Output(8, logData)
 	}
 }
 
 // Create function to write data to different stores, e.g. stdout and local logfile
 func writeToDataStore(logData string) {
 	// fmt.Println("Preparing data for store: ",logData)
-	logger.Debug().Msg("Preparing channeldata for store: " + logData)
+	logger.Debug().Msg("Preparing logdata for store: " + logData)
 	log.Println(logData)
 	return
 }
