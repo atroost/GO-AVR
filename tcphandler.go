@@ -7,6 +7,8 @@ import (
 	"net"
 	logger "github.com/rs/zerolog/log"
 	"strings"
+	// "regexp"
+	// "unicode"
 )
 
 // Create alternative handler for serving TCP connections
@@ -46,14 +48,28 @@ func handleTCPConnectionLogChannel(c net.Conn, logChannel chan string) {
 		if bufferByteReader > 0 && readBytes > 0 {
 			// Convert data to string for logging purposes
 			bytesConvertedToString := string(dataBuffer[:int(dataInBuffer)])
-			// bytesConvertedToUtf := strings.ToValidUTF8(bytesConvertedToString, "")
-			stringStrippedOfUnicode := strings.TrimLeft(bytesConvertedToString, "\ufffd\u0000\u0005t\u0000\\ufff\u0003\ufffd\u0001A\u00001\u00002&abcdefghikjlmnopqrstuvw1234567890{}!@#$%^&*()")
+
+			// Validate message index based on available log messages
+			messageIndex := strings.IndexAny(bytesConvertedToString, "ABCDEGHMNOPQRSTUV")
+			logger.Trace().Str("Index", string(messageIndex)).Msg("Calculated messageindex for message")
+
+			// Use index to get full message
+			indexedMessage := string(dataBuffer[messageIndex:int(dataInBuffer)])
+			
+			// OR Create regexp to ensure all unwanted characters are stripped
+			// avrRegex, err := regexp.Compile("[^a-zA-Z0-9|\n ]+")
+			// if err != nil {
+			// 	logger.Trace().Err(err).Msg("regular expression error")
+			// }
+			// processedAvrString := avrRegex.ReplaceAllString(bytesConvertedToString, "")
+			
+			// Strip of all unwanted characters from the regular expression
+			// stripProcessedString := strings.TrimLeft(processedAvrString, "abcdefghikjlmnopqrstuvwxyz1234567890{}?!@#$%^&*()[]123456789�")			
 			
 			// Optional loglines for debugging
 			logger.Trace().Str("bytesize", string(bufferByteReader)).Msg("BufferBytereader calculated")
 
-
-			logChannel <- stringStrippedOfUnicode
+			logChannel <- indexedMessage
 			c.Close()
 			return
 		}
@@ -111,6 +127,7 @@ func handleTCPConnection(c net.Conn) {
 			c.Close()
 			return
 		}
+		c.Close()
 		return
 	}
 }

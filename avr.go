@@ -12,7 +12,7 @@ import (
 func main() {
 	// determine whether to use a secure server or not
 	useChannelforLogging := true
-	loggingBaseUrl := "./logs/avrlog-"
+	loggingBaseUrl := "./logs/avr-prod-go"
 	loggingExportFolder := "./logs/"
 
 	// argument function
@@ -77,7 +77,7 @@ func main() {
 	}
 	
 	// Create logfile structure
-	logFileName := loggingPath + "avrlog-" + uuid + ".log"
+	logFileName := loggingPath + "avr-prod-go" + uuid + ".log"
 	logger.Info().Msg("LogFile path and file created: " + logFileName)
 
 	// Launch server based on input paramters during launch.

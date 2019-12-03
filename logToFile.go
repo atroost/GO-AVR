@@ -58,15 +58,17 @@ func createExportFile (fileName string, loggingPath string, loggingExportFolder 
 		for _, f := range files {
 			logger.Debug().Msg("Looping over content of logfile directory, filename: " + f.Name())
 			currentLogFile := filepath.Base(fileName) 
-			exportExtension := ".export"
 			// exportlocation := "./logs/"
 			if f.Name() != currentLogFile {
-				err:= os.Rename(loggingPath + f.Name(), loggingExportFolder + f.Name() + exportExtension)
+				currentTime := time.Now()
+				exportTime := currentTime.Add(-1*time.Hour)
+				// exportExtension := "." + currentTime.Format("2006-01-02-15")  
+				err:= os.Rename(loggingPath + f.Name(), loggingExportFolder + currentLogFile + "." + exportTime.Format("2006-01-02-15"))
 				if err != nil {
 					logger.Error().Err(err).Msg("Error renaming file for export")
 					fmt.Println("error", err)
 				}
-				logger.Info().Msg("Rewrote " + currentLogFile + " to: " + string(f.Name() + exportExtension))
+				logger.Info().Msg("Rewrote " + currentLogFile + " to: " + string(currentLogFile + "." + exportTime.Format("2006-01-02-15")))
 			} else {
 				logger.Debug().Msg("File: " +  f.Name() + " unchanged")	
 			}
