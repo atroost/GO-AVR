@@ -23,7 +23,7 @@ func startAvrSecure(launchWithChannel bool) {
 		logger.Fatal().Err(err).Msg("Error while loading certificates")
 	}
 
-	// Construct secure TCP server - TODO make naming convention the same over the  two files
+	// Construct secure TCP server and make it compliant with KSP.
 	config := tls.Config{
 		Certificates: []tls.Certificate{cert},
 		MinVersion: tls.VersionTLS12,
