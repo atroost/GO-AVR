@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: avr-prod-canary
+spec:
+  replicas: 0
+  selector:
+    matchLabels:
+      app: avr-prod
+      track: canary
+  template:
+    metadata:
+      name: avr-prod
+      labels:
+        app: avr-prod
+        track: canary
+    spec:
+      containers:
+      - name: avr-prod
+        image: registry.platform.svc.appfactory.local:5000/docker/avr_go_prod:0.71
+        volumeMounts:
+        - mountPath: /server/logs
+          name: avr-prod-volume
+        - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+          name: default-token-mp1pf
+          readOnly: true
+        ports:
+        - containerPort: 2499
+        command: ["./avrserver"]
+        args: ["2499", "info"]
+        resources:
+          limits:
+              cpu: 1
+          requests:
+              cpu: 800m
+      volumes:
+      - name: avr-prod-volume
+        persistentVolumeClaim:
+          claimName: avr-pvc-prod
+      - name: default-token-mp1pf
+        secret:
+          defaultMode: 420
+          secretName: default-token-mp1pf
+ 

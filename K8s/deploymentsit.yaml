@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: avr-canary
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: avr
+      track: canary
+  template:
+    metadata:
+      name: avr
+      labels:
+        app: avr
+        track: canary
+    spec:
+      containers:
+      - name: avr
+        image: registry.platform.svc.appfactory.local:5000/docker/avr_go:0.60
+        volumeMounts:
+        - mountPath: /server/logs
+          name: avr-volume
+        - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+          name: default-token-nqll4
+          readOnly: true
+        ports:
+        - containerPort: 2498
+        command: ["./avrserver"]
+        args: ["2498", "debug"]
+      volumes:
+      - name: avr-volume
+        persistentVolumeClaim:
+          claimName: avr-pvc
+      - name: default-token-nqll4
+        secret:
+          defaultMode: 420
+          secretName: default-token-nqll4
+ 
