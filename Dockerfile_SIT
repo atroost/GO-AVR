@@ -5,8 +5,8 @@ RUN apk update && apk add git && go get gopkg.in/natefinch/lumberjack.v2 && go g
 RUN mkdir /server
 RUN mkdir /server/certs
 COPY *.go /server/
-COPY ./certs-prod/server.key /server/certs
-COPY ./certs-prod/server.pem /server/certs
+COPY ./certs-sit/server.key /server/certs
+COPY ./certs-sit/server.pem /server/certs
 WORKDIR /server
 
 EXPOSE 2499
