@@ -4,6 +4,7 @@ import (
 	// "fmt"
 	"crypto/rand"
 	"crypto/tls"
+
 	// "log"
 	logger "github.com/rs/zerolog/log"
 )
@@ -15,7 +16,7 @@ func startAvrSecure(launchWithChannel bool) {
 	configPortSecureTcp := ":2499"
 	// fmt.Println("** TCP Service Started securely on Port:", configPortSecureTcp, " **")
 	logger.Info().Msg("TCP Service Started securely on port " + configPortSecureTcp)
-	
+
 	// load certificates
 	cert, err := tls.LoadX509KeyPair("certs/server.pem", "certs/server.key")
 	if err != nil {
@@ -26,7 +27,7 @@ func startAvrSecure(launchWithChannel bool) {
 	// Construct secure TCP server and make it compliant with KSP.
 	config := tls.Config{
 		Certificates: []tls.Certificate{cert},
-		MinVersion: tls.VersionTLS12,
+		MinVersion:   tls.VersionTLS12,
 		CipherSuites: []uint16{
 			tls.TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256,
 			tls.TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256,
@@ -50,8 +51,16 @@ func startAvrSecure(launchWithChannel bool) {
 	// determine to use a channel or not
 	if launchWithChannel {
 		// Build channel for logging service
-		logChannel:= make(chan string)
-		go writeToDataStoreOverChannel(logChannel)
+		logChannel := make(chan string)
+		if logToFile {
+			go writeToDataStoreOverChannel(logChannel)
+		} else if logForward && testLocal {
+			go startConnection(localHost, "", "", logChannel)
+		} else if logForward && testLocal == false && connectWithCredentials {
+			go startConnection(remoteHost, userName, password, logChannel)
+		} else {
+			go startConnection(remoteHost, "", "", logChannel)
+		}
 		for {
 			c, err := secureTcpServer.Accept()
 			if err != nil {
@@ -63,18 +72,17 @@ func startAvrSecure(launchWithChannel bool) {
 			// See tcphandler.go for the way in which it handles this
 			go handleTCPConnectionLogChannel(c, logChannel)
 		}
-		} else {
-			for {
-				c, err := secureTcpServer.Accept()
-				if err != nil {
-					// fmt.Println(err)
-					logger.Error().Err(err).Msg("Error during TCP handshaker")
-					return
-				}
-				// When we accept a request we want a special GoRoutine to thread off the management of the buffer and data in it
-				// See tcphandler.go for the way in which it handles this
-				go handleTCPConnection(c)
+	} else {
+		for {
+			c, err := secureTcpServer.Accept()
+			if err != nil {
+				// fmt.Println(err)
+				logger.Error().Err(err).Msg("Error during TCP handshaker")
+				return
 			}
+			// When we accept a request we want a special GoRoutine to thread off the management of the buffer and data in it
+			// See tcphandler.go for the way in which it handles this
+			go handleTCPConnection(c)
 		}
+	}
 }
-

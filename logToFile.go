@@ -117,7 +117,6 @@ func writeToDataStoreOverChannel(logChannel chan string) {
 		// fmt.Println("Preparing channeldata for store: ",logData)
 		logger.Debug().Msg("Preparing channeldata for store: " + logData)
 		log.Println(logData)
-		// log.Output(8, logData)
 	}
 }
 
