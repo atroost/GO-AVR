@@ -28,7 +28,7 @@ type Serverconfig struct {
 		Password string `json:"password"`
 	} `json:"mqttservercredentials"`
 	Mqttclientname     string `json:"mqttclientname"`
-	Mqttlocalhost      string `json:"mqttlocalhost"`
+	Mqttlocalhost      string `json:"mqttlocalhost"` // when connecting to mosquitto on mac use docker.for.mac.localhost
 	Mqttlocalport      string `json:"mqttlocalport"`
 	Mqtthost           string `json:"mqtthost"`
 	Mqttport           string `json:"mqttport"`
@@ -55,13 +55,27 @@ func retrieveConfig() {
 	// Launch server config
 	openconfig, err := os.Open("./config/serverConfig.json")
 	if err != nil {
-		logger.Error().Err(err).Msg("Error while opening config file")
+		logger.Error().Err(err).Msg("Error while opening config file from primary location, retrying location")
+		openconfig, err := os.Open("/config/serverConfig.json")
+		defer openconfig.Close()
+		decoder := json.NewDecoder(openconfig)
+		decodingerror := decoder.Decode(&serverconfiguration)
+		if decodingerror != nil {
+			logger.Error().Err(err).Msg("Error while decoding config file from retry")
+		}
+		if err != nil {
+			logger.Error().Err(err).Msg("Fallback location also failed.")
+		} else {
+			logger.Info().Msg("Opened serverconfiguration from secondary location")
+		}
+	} else {
+		logger.Info().Msg("Opened serverconfiguration from primary location")
 	}
 	defer openconfig.Close()
 	decoder := json.NewDecoder(openconfig)
 	decodingerror := decoder.Decode(&serverconfiguration)
 	if decodingerror != nil {
-		logger.Error().Err(err).Msg("Error while decoding config file")
+		logger.Error().Err(err).Msg("Error while decoding config file from primary location.")
 	}
 	avrTransport = serverconfiguration.Avrtransport
 	logger.Trace().Msg(avrTransport)
