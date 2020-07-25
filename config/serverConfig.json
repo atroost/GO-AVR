@@ -1,0 +1,20 @@
+{
+    "avrport": ":2498",
+    "avrsecureport": ":2499",
+    "avrtransport": "mqttforwarder",
+    "avrlogfile": "./logs/avr-prod-go",
+    "avrexportfolder": "./logs/",
+    "mqtttestlocal": true,
+    "mqttcredentialsneeded": false,
+    "mqttservercredentials": {
+        "username": "localhost",
+        "password": "12345"
+    },
+    "mqttclientname": "AVR-Publisher",
+    "mqttlocalhost": "localhost",
+    "mqttlocalport": "1883",
+    "mqtthost": "mqtt.eclipse.org",
+    "mqttport": "1883",
+    "mqttpublishtopic": "/stb-avr",
+    "mqttsubscribetopic": "avr/#"
+}
