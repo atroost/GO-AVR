@@ -10,6 +10,7 @@ The application structure is currently as follows:
 * tcphandler.go - contains a TCP handler that reads data from a TCP Bytestream and converts it into strings;
 * logToFile.go - contains a writer module that can be used to write logrows to whichever preferred logging utility or stdout;
 * logForwarder.go - contains a forwarder module that can be used to write logrows to whichever preferred endpoint;
+* mqttforwarder.go - contains a forwarder module that can be used to write logrows to an MQTT endpoint;
 
 For legacy reasons a testsuite is created in Node.js and can be found under the testClient folder. By opening the testClient in an editor like visual studio or other it should provide guidance on how to use the testclient itself. In general it aims to:
 * provide a way to set the amount of testmessages to send;

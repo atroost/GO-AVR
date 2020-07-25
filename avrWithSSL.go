@@ -11,11 +11,10 @@ import (
 
 // The non secure server is basically a similar construct as a TLS server, just with less parameters to define for TLS
 // TODO to re-use the server parameters that are provided when go run is done
-func startAvrSecure(launchWithChannel bool) {
+func startAvrSecure() {
 	// build port config to launch the TCP socket
-	configPortSecureTcp := ":2499"
-	// fmt.Println("** TCP Service Started securely on Port:", configPortSecureTcp, " **")
-	logger.Info().Msg("TCP Service Started securely on port " + configPortSecureTcp)
+	configPortSecureTCP := serverconfiguration.Avrsecureport
+	logger.Info().Msg("TCP Service Started securely on port " + configPortSecureTCP)
 
 	// load certificates
 	cert, err := tls.LoadX509KeyPair("certs/server.pem", "certs/server.key")
@@ -40,49 +39,33 @@ func startAvrSecure(launchWithChannel bool) {
 		},
 	}
 	config.Rand = rand.Reader
-	secureTcpServer, err := tls.Listen("tcp", configPortSecureTcp, &config)
+	secureTcpServer, err := tls.Listen("tcp", configPortSecureTCP, &config)
 	if err != nil {
-		// fmt.Println(err)
 		logger.Error().Err(err).Msg("Error setting up Secure TCP server")
 		return
 	}
 
 	// The famous loop to prevent the process from closing
-	// determine to use a channel or not
-	if launchWithChannel {
-		// Build channel for logging service
-		logChannel := make(chan string)
-		if logToFile {
-			go writeToDataStoreOverChannel(logChannel)
-		} else if logForward && testLocal {
-			go startConnection(localHost, "", "", logChannel)
-		} else if logForward && testLocal == false && connectWithCredentials {
-			go startConnection(remoteHost, userName, password, logChannel)
-		} else {
-			go startConnection(remoteHost, "", "", logChannel)
-		}
-		for {
-			c, err := secureTcpServer.Accept()
-			if err != nil {
-				// fmt.Println(err)
-				logger.Error().Err(err).Msg("Error during TCP handshaker")
-				return
-			}
-			// When we accept a request we want a special GoRoutine to thread off the management of the buffer and data in it
-			// See tcphandler.go for the way in which it handles this
-			go handleTCPConnectionLogChannel(c, logChannel)
-		}
+	// Build channel for logging service
+	logChannel := make(chan string)
+	if avrTransport == "file" {
+		go writeToDataStoreOverChannel(logChannel)
+	} else if avrTransport == "mqttforwarder" && testWithLocalMqtt {
+		go startMqttConnection(mqttLocalhost+":"+mqttLocalPort, "", "", logChannel)
+	} else if avrTransport == "mqttforwarder" && testWithLocalMqtt == false && mqttCredentialsNeeded {
+		go startMqttConnection(mqttRemoteHost+":"+mqttRemotePort, mqttRemoteUsername, mqttRemotePassword, logChannel)
 	} else {
-		for {
-			c, err := secureTcpServer.Accept()
-			if err != nil {
-				// fmt.Println(err)
-				logger.Error().Err(err).Msg("Error during TCP handshaker")
-				return
-			}
-			// When we accept a request we want a special GoRoutine to thread off the management of the buffer and data in it
-			// See tcphandler.go for the way in which it handles this
-			go handleTCPConnection(c)
+		go startMqttConnection(mqttRemoteHost+":"+mqttRemotePort, "", "", logChannel)
+	}
+	for {
+		c, err := secureTcpServer.Accept()
+		if err != nil {
+			// fmt.Println(err)
+			logger.Error().Err(err).Msg("Error during TCP handshaker")
+			return
 		}
+		// When we accept a request we want a special GoRoutine to thread off the management of the buffer and data in it
+		// See tcphandler.go for the way in which it handles this
+		go handleTCPConnectionLogChannel(c, logChannel)
 	}
 }

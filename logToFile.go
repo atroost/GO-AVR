@@ -120,14 +120,6 @@ func writeToDataStoreOverChannel(logChannel chan string) {
 	}
 }
 
-// Create function to write data to different stores, e.g. stdout and local logfile
-func writeToDataStore(logData string) {
-	// fmt.Println("Preparing data for store: ",logData)
-	logger.Debug().Msg("Preparing logdata for store: " + logData)
-	log.Println(logData)
-	return
-}
-
 /*
 // Function to create statistics for the exported file.
 func createStatistics(exportedFile string) {
