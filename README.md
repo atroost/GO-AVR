@@ -25,7 +25,20 @@ To run the code including a subfiles it's possible to provide the server argumen
 go run . <port> <loglevel>
 ```
 
-Using the included Dockerfile it's possible to run the container (either detached or not). To do so use the included dockerfiles per environment. The most important thing is to ensure that you have the private key and PEM file for the domain on which the server will be active
+Using the included Dockerfile it's possible to run the container (either detached or not). To do so use the included dockerfiles per environment. The most important thing is to ensure that you have the private key and PEM file for the domain on which the server will be active.
+
+### Using a local MQTT instance on a Mac while running docker
+This code was validated against a local running  Mosquitto broker running on a Mac. Since a Docker-Mac connection has some interesting networking topology we need to change the serverConfiguration.json a bit to be able to connect a docker container to a mosquitto broker running on a mac.
+
+#### Normal localhost:
+```
+ "mqttlocalhost": "localhost"
+```
+
+#### Dockerized mac localhost:
+```
+ "mqttlocalhost": "docker.for.mac.localhost"
+```
 
 ### Build docker image for production
 Create folder for the production certificates and call this folder certs-prod. Place the pem and the keyfile in this directory and ensure that the naming convention is server.pem or server.key. The dockerfile will ensure that only the applicable environment certificates are copied. Check needed is if you want to expose port 2498 or port 2499.
@@ -41,7 +54,7 @@ Run the associated created image (this case OSX forces to explicitely set the po
 
 ### Run docker image
 ```
- docker run -p 2498:2498 <avr_image_reference> 2498/2499 tail -f /dev/null
+ docker run -p 2498:2498 <avr_image_reference> 2498 or 2499 tail -f /dev/null
 ```
 
 This will launch the command line tailing interface of the container itself. Use the testclient to see logfiles being created in the container
