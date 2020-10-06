@@ -1,2 +1,4 @@
 certs/server.key
 certs/server.pem
+certs-sit/server.key
+certs-sit/server.pem

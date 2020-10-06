@@ -34,7 +34,7 @@ Create folder for the production certificates and call this folder certs-prod. P
 ### Build docker image for SIT
 Create folder for the SIT certificates and call this folder certs-sit. Place the pem and the keyfile in this directory and ensure that the naming convention is server.pem or server.key. The dockerfile will ensure that only the applicable environment certificates are copied. Check needed is if you want to expose port 2498 or port 2499.
 ```
- docker build -f Dockerfile_SIT -t <avr_image>:version .
+ docker build -f Dockerfile_TST -t <avr_image>:version .
 ```
 Run the associated created image (this case OSX forces to explicitely set the port for docker) As an input parameter we also put the port into  the container runtime (2498 for non-secure / 2499 for secure)
 
